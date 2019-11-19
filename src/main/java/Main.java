@@ -15,7 +15,7 @@ public class Main {
     public static boolean validate(Stack s) {
         int tutup = 0;
         int buka = 0;
-        int jumThen = 0; //yesy
+        int jumThen = 0; 
         int jumIf = 0;
         Stack dump = new Stack();
         while (!s.isEmpty()) {
