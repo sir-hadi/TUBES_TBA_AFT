@@ -15,15 +15,56 @@ public class Main {
     public static boolean validate(Stack s) {
         int tutup = 0;
         int buka = 0;
+        int jumThen = 0; //yesy
+        int jumIf = 0;
+        Stack dump = new Stack();
         while (!s.isEmpty()) {
             int k = (int) s.pop();
+            int p = 0;
+            p++;
+            System.out.println("\n"+p+".");
+            System.out.println("yg di pop : "+k );
+            
+            
             if (k == 10) {
+                int t = (int) s.peek();
+                System.out.println("selanjutnya : "+t);
+                System.out.println("=====");
+                System.out.println(t);
+                System.out.println("=====");
+                
+                if(t != 1 && t != 10){
+                    return false;
+                }
                 tutup++;
             } else if (k == 9) {
                 buka++;
             }else if(k == 8){
                 
+            }else if(k == 7){
+                
+            }else if(k == 6){
+                int dumped = (int) dump.pop();
+                if(dumped != 1 && dumped != 9){
+                    return false;
+                }
+            }else if(k == 5 || k == 4 || k == 3 || k == 2 ){
+                
+                int t = (int) s.peek();
+                System.out.println("selanjutnya : "+t);
+                if(t != 1 && t != 10){
+                    return false;
+                }
+            }else if(k == 1){
+                int t = (int) s.peek();
+                System.out.println("selanjutnya : "+t);
+                System.out.println("");
+                if(t == 1){
+                    return false;
+                }
             }
+            
+            dump.add(k);
         }
         return buka == tutup;
     }
@@ -32,7 +73,7 @@ public class Main {
 
         Stack s = new Stack();
         Stack n = new Stack();
-        String f = "(p and q)(q xor p)";
+        String f = "p(p and q)"; //peaknya kosongkan, abis 9 gak boleh langsung 1 distack [PR]
         char[] arChar = f.toCharArray();
 
         for (int i = arChar.length - 1; i >= 0; i--) {
@@ -148,7 +189,7 @@ public class Main {
         } else if (validate(n)) {
             System.out.println("VALID");
         } else {
-            System.out.println("ERROR");
+            System.out.println("NOT VALID");
         }
 
     }
