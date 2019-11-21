@@ -17,42 +17,52 @@ public class Main {
         int buka = 0;
         Stack dump = new Stack();
         Stack ifthen = new Stack();
+        Stack kurung = new Stack();
 
         while (!s.isEmpty()) {
             int k = (int) s.pop();
-
+            //Proses ')'
             if (k == 10) {
-                if(!s.isEmpty()){
+                if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t != 1 && t != 10) {
                         return false;
                     }
-                }                
+                }
                 tutup++;
-                
-            } else if (k == 9) {
-                if(!s.isEmpty()){
+                kurung.push(10);
+            }
+            //Proses '('
+            else if (k == 9) {
+                if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t == 1) {
                         return false;
                     }
                 }
                 buka++;
-                
-            } else if (k == 7) {
+                if (!kurung.isEmpty()) {
+                    kurung.pop();
+                }else{
+                    return false;
+                }
+            } 
+            //Proses 'then'
+            else if (k == 7) {
                 if (s.isEmpty()) {
                     return false;
                 }
-                if(!dump.isEmpty()){
+                if (!dump.isEmpty()) {
                     int dumped = (int) dump.pop();
                     int t = (int) s.peek();
                     if (dumped != 1 && dumped != 9 && t != 1 && t != 10) {
                         return false;
                     }
-                }                
-                ifthen.add(10);
-                
-            } else if (k == 6) {
+                }
+                ifthen.add(7);
+            } 
+            //Proses 'if'
+            else if (k == 6) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (!dump.isEmpty()) {
@@ -64,9 +74,12 @@ public class Main {
                 }
                 if (!ifthen.empty()) {
                     ifthen.pop();
+                } else {
+                    return false;
                 }
-                
-            } else if (k == 2) {
+            }
+            //Proses 'not'
+            else if (k == 2) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     int dumped = (int) dump.pop();
@@ -74,8 +87,9 @@ public class Main {
                         return false;
                     }
                 }
-                
-            } else if (k == 5 || k == 4 || k == 3 || k == 8) {
+            }
+            //Proses 'and','or','xor', dan 'iff'
+            else if (k == 5 || k == 4 || k == 3 || k == 8) {
                 if (s.empty()) {
                     return false;
                 }
@@ -84,30 +98,31 @@ public class Main {
                 if (t != 1 && t != 10 && dumped != 9 && dumped != 1) {
                     return false;
                 }
-                
-            } else if (k == 1) {
+            }
+            //Proses 'p','q','r','s'
+            else if (k == 1) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t == 1) {
                         return false;
                     }
                 }
-                
             }
-
             dump.add(k);
-        }       
-        return (buka == tutup) && (ifthen.isEmpty());
+        }
+        return (kurung.isEmpty()) && (ifthen.isEmpty());
     }
 
     public static void main(String[] args) {
-
+        Scanner scan = new Scanner(System.in);
+        
         Stack s = new Stack();
         Stack n = new Stack();
-        String f = "(if p then q ) ";
-        f = "if p then p";//nih kenapa??? berati yang belum validasi operator dan not sama if then then if bug, masalahnya di thennya,DARI SI SATU DAN SI KURUNG
-        f = "p xor (q and not(p and q))";
-        
+        String f = scan.nextLine();
+//        f = "if p then p";//nih kenapa??? berati yang belum validasi operator dan not sama if then then if bug, masalahnya di thennya,DARI SI SATU DAN SI KURUNG
+//        f = "p xor ((q and not(p and q))";
+//        //f = "if (p) then (p) then p";
+//        f = "pq";
         char[] arChar = f.toCharArray();
 
         for (int i = arChar.length - 1; i >= 0; i--) {
@@ -116,50 +131,38 @@ public class Main {
 
         while (!s.isEmpty()) {
             char poped = (char) s.pop();
-
+            
             if (poped == ' ') {
                 //do nothing
-            } else if (poped == 'p' || poped == 'q') {
+            } else if (poped == 'p' || poped == 'q' || poped == 'r' || poped == 's') {
                 n.add(1);
-                System.out.print("1");
             } else if (poped == 'a') {
                 poped = (char) s.pop();
-                if (poped == 'n') {
-                    poped = (char) s.pop();
-                    if (poped == 'd') {
-                        n.add(3);
-                        System.out.print("3");
-                    }
-                }
+                if (poped == 'n') poped = (char) s.pop();
+                if (poped == 'd') n.add(3);
+                
             } else if (poped == 'x') {
                 poped = (char) s.pop();
-                if (poped == 'o') {
-                    poped = (char) s.pop();
-                    if (poped == 'r') {
-                        n.add(5);
-                        System.out.print("5");
-                    }
-                }
+                if (poped == 'o') poped = (char) s.pop();
+                if (poped == 'r') n.add(5);
+                
             } else if (poped == 'n') {
                 poped = (char) s.pop();
                 if (poped == 'o') {
                     poped = (char) s.pop();
                     if (poped == 't') {
                         n.add(2);
-                        System.out.print("2");
                     }
                 }
             } else if (poped == 'o') {
                 poped = (char) s.pop();
                 if (poped == 'r') {
                     n.add(4);
-                    System.out.print("4");
                 }
             } else if (poped == 'i') {
                 poped = (char) s.pop();
                 if (poped == 'f') {
                     n.add(6);
-                    System.out.print("6");
                 }
             } else if (poped == 't') {
                 poped = (char) s.pop();
@@ -169,7 +172,6 @@ public class Main {
                         poped = (char) s.pop();
                         if (poped == 'n') {
                             n.add(7);
-                            System.out.print("7");
                         }
                     }
                 }
@@ -179,34 +181,30 @@ public class Main {
                     poped = (char) s.pop();
                     if (poped == 'f') {
                         n.add(8);
-                        System.out.print("8");
                     }
                 }
             } else if (poped == '(') {
                 n.add(9);
-                System.out.print("9");
 
             } else if (poped == ')') {
                 n.add(10);
-                System.out.print("10");
-
             } else {
                 n.add(0);
             }
-
         }
-
+        
+        System.out.print("TOKEN : |");
         for (Object i : n) {
-            System.out.print(i + "||");
+            System.out.print(i + "|");
         }
+        
+        System.out.print("\nRESULT : ");
         if (n.contains(0)) {
-            System.out.println("NOT VALID");
+            System.out.print("NOT VALID");
         } else if (validate(n)) {
-            System.out.println("VALID");
+            System.out.print("VALID");
         } else {
-            System.out.println("NOT VALID");
+            System.out.print("NOT VALID");
         }
-
     }
-
 }
