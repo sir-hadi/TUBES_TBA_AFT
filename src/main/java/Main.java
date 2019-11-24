@@ -12,35 +12,31 @@ import java.util.*;
 
 public class Main {
 
-    public static boolean validate(Stack s) {
-        int tutup = 0;
-        int buka = 0;
-        Stack dump = new Stack();
-        Stack ifthen = new Stack();
-        Stack kurung = new Stack();
+    public static boolean validate(Stack s) {       
+        Stack dump = new Stack(); // menyimpan stack s yang telah di pop
+        Stack ifthen = new Stack(); // menyimpan then 
+        Stack kurung = new Stack(); // menyimpan )
 
         while (!s.isEmpty()) {
-            int k = (int) s.pop();
+            int poped = (int) s.pop();
             //Proses ')'
-            if (k == 10) {
+            if (poped == 10) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t != 1 && t != 10) {
                         return false;
                     }
                 }
-                tutup++;
                 kurung.push(10);
             }
             //Proses '('
-            else if (k == 9) {
+            else if (poped == 9) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t == 1) {
                         return false;
                     }
                 }
-                buka++;
                 if (!kurung.isEmpty()) {
                     kurung.pop();
                 }else{
@@ -48,7 +44,7 @@ public class Main {
                 }
             } 
             //Proses 'then'
-            else if (k == 7) {
+            else if (poped == 7) {
                 if (s.isEmpty()) {
                     return false;
                 }
@@ -62,7 +58,7 @@ public class Main {
                 ifthen.add(7);
             } 
             //Proses 'if'
-            else if (k == 6) {
+            else if (poped == 6) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (!dump.isEmpty()) {
@@ -79,7 +75,7 @@ public class Main {
                 }
             }
             //Proses 'not'
-            else if (k == 2) {
+            else if (poped == 2) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     int dumped = (int) dump.pop();
@@ -89,7 +85,7 @@ public class Main {
                 }
             }
             //Proses 'and','or','xor', dan 'iff'
-            else if (k == 5 || k == 4 || k == 3 || k == 8) {
+            else if (poped == 5 || poped == 4 || poped == 3 || poped == 8) {
                 if (s.empty()) {
                     return false;
                 }
@@ -100,7 +96,7 @@ public class Main {
                 }
             }
             //Proses 'p','q','r','s'
-            else if (k == 1) {
+            else if (poped == 1) {
                 if (!s.isEmpty()) {
                     int t = (int) s.peek();
                     if (t == 1) {
@@ -108,7 +104,7 @@ public class Main {
                     }
                 }
             }
-            dump.add(k);
+            dump.add(poped);
         }
         return (kurung.isEmpty()) && (ifthen.isEmpty());
     }
@@ -116,37 +112,44 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         
-        Stack s = new Stack();
-        Stack n = new Stack();
+        Stack s = new Stack(); // s berati Stack
+        Stack n = new Stack(); // n berati Number yang merujuk ke angka nagka token
+        System.out.print("Input String : ");
         String f = scan.nextLine();
-//        f = "if p then p";//nih kenapa??? berati yang belum validasi operator dan not sama if then then if bug, masalahnya di thennya,DARI SI SATU DAN SI KURUNG
-//        f = "p xor ((q and not(p and q))";
-//        //f = "if (p) then (p) then p";
-//        f = "pq";
+        //mengubah string menjadi array of char
         char[] arChar = f.toCharArray();
-
+        
+        //memasukan char ke dalam stack char
         for (int i = arChar.length - 1; i >= 0; i--) {
             s.add(arChar[i]);
         }
 
         while (!s.isEmpty()) {
+            // nge pop top of stack
             char poped = (char) s.pop();
             
+            //membaca spasi
             if (poped == ' ') {
                 //do nothing
-            } else if (poped == 'p' || poped == 'q' || poped == 'r' || poped == 's') {
+            } 
+            //Membaca operator : p,q,r,s
+            else if (poped == 'p' || poped == 'q' || poped == 'r' || poped == 's') {
                 n.add(1);
-            } else if (poped == 'a') {
+            }
+            //Membaca operator : and
+            else if (poped == 'a') {
                 poped = (char) s.pop();
                 if (poped == 'n') poped = (char) s.pop();
-                if (poped == 'd') n.add(3);
-                
-            } else if (poped == 'x') {
+                if (poped == 'd') n.add(3);                
+            } 
+            //membaca operator : xor
+            else if (poped == 'x') {
                 poped = (char) s.pop();
                 if (poped == 'o') poped = (char) s.pop();
-                if (poped == 'r') n.add(5);
-                
-            } else if (poped == 'n') {
+                if (poped == 'r') n.add(5);                
+            }
+            //membaca operator : not
+            else if (poped == 'n') {
                 poped = (char) s.pop();
                 if (poped == 'o') {
                     poped = (char) s.pop();
@@ -154,17 +157,23 @@ public class Main {
                         n.add(2);
                     }
                 }
-            } else if (poped == 'o') {
+            } 
+            //membaca operator : or
+            else if (poped == 'o') {
                 poped = (char) s.pop();
                 if (poped == 'r') {
                     n.add(4);
                 }
-            } else if (poped == 'i') {
+            }
+            //membaca operator : if
+            else if (poped == 'i') {
                 poped = (char) s.pop();
                 if (poped == 'f') {
                     n.add(6);
                 }
-            } else if (poped == 't') {
+            } 
+            //membaca operator : then
+            else if (poped == 't') {
                 poped = (char) s.pop();
                 if (poped == 'h') {
                     poped = (char) s.pop();
@@ -175,7 +184,9 @@ public class Main {
                         }
                     }
                 }
-            } else if (poped == 'i') {
+            } 
+            //membaca operator : if
+            else if (poped == 'i') {
                 poped = (char) s.pop();
                 if (poped == 'f') {
                     poped = (char) s.pop();
@@ -183,21 +194,29 @@ public class Main {
                         n.add(8);
                     }
                 }
-            } else if (poped == '(') {
+            } 
+            //membaca grouping : (
+            else if (poped == '(') {
                 n.add(9);
 
-            } else if (poped == ')') {
+            } 
+            //membaca grouping : )
+            else if (poped == ')') {
                 n.add(10);
-            } else {
+            } 
+            //mengisi 0 ke stack jika semua kondisi tidak ada yang terpilih
+            else {
                 n.add(0);
             }
         }
         
+        //Output Token
         System.out.print("TOKEN : |");
         for (Object i : n) {
             System.out.print(i + "|");
         }
         
+        //Output hasil validasi
         System.out.print("\nRESULT : ");
         if (n.contains(0)) {
             System.out.print("NOT VALID");
